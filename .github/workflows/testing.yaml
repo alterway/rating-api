@@ -32,5 +32,4 @@ jobs:
         name: alterwayrnd/rating-api
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        docker: Dockerfile
         tags: "latest,testing"
