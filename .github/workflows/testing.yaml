@@ -24,7 +24,7 @@ jobs:
     - name: Build & push
       uses: elgohr/Publish-Docker-Github-Action@master #docker/build-push-action@v1
       with:
-        name: vdaviot/rating-api
+        name: alterwayrnd/rating-api
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         docker: Dockerfile
