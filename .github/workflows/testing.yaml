@@ -1,0 +1,31 @@
+name: rating-api-testing
+on:
+  push:
+    branches:
+      - testing
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version:  3.8
+
+    - name: Tox
+      # Run tox using the version of Python in `PATH`
+      run: | 
+        pip install tox
+        tox -e py
+
+    - name: Build & push
+      uses: elgohr/Publish-Docker-Github-Action@master #docker/build-push-action@v1
+      with:
+        name: vdaviot/rating-api
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        docker: Dockerfile
+        tags: "latest,testing"
