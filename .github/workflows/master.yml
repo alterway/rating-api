@@ -1,31 +1,35 @@
 name: rating-api-master
 on:
   pull_request:
-    branches:
-      - master
-    types: [closed]
+    branches: [master]
+    types: [closed, opened, reopened]
 
 jobs:
-  build:
+  rating-api-master:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8']
 
     steps:
     - uses: actions/checkout@master
+      name: Login & checkout
+      with:
+        ref: master
 
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
-        python-version:  3.8
+        python-version: ${{ matrix.python-version }}
 
     - name: Test code
-      # Run tox using the version of Python in `PATH`
       run: | 
         pip install tox
         tox -e py
 
     - name: Build & push
-      uses: elgohr/Publish-Docker-Github-Action@master #docker/build-push-action@v1
+      if: github.event.action == 'closed' && github.event.pull_request.merged == true
+      uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: alterwayrnd/rating-api
         username: ${{ secrets.DOCKER_USERNAME }}

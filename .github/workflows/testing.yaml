@@ -4,25 +4,30 @@ on:
     branches:
       - testing
 jobs:
-  build:
+  rating-api-testing:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8']
 
     steps:
     - uses: actions/checkout@master
+      name: Login & checkout
+      with:
+        ref: testing
 
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
-        python-version:  3.8
+        python-version: ${{ matrix.python-version }}
 
-    - name: Tox
-      # Run tox using the version of Python in `PATH`
+    - name: Test code
       run: | 
         pip install tox
         tox -e py
 
     - name: Build & push
-      uses: elgohr/Publish-Docker-Github-Action@master #docker/build-push-action@v1
+      uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: alterwayrnd/rating-api
         username: ${{ secrets.DOCKER_USERNAME }}
