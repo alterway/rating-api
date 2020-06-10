@@ -11,13 +11,8 @@ RUN apk update \
     && pip3 install wheel==0.34.2
 
 COPY . /app
-<<<<<<< HEAD
 COPY ./entrypoint.sh /entrypoint.sh
 COPY ./environment.sh /environment.sh
-=======
-COPY ./hack/entrypoint.sh /entrypoint.sh
-COPY ./hack/environment.sh /environment.sh
->>>>>>> structure and actions
 
 WORKDIR /app
 
