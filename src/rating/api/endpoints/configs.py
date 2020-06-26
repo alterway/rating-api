@@ -4,9 +4,8 @@ from flask_json import as_json
 
 from rating.api import config
 from rating.api import schema
+from rating.api.endpoints.auth import authenticated_user
 from rating.api.secret import require_admin
-
-from .auth import authenticated_user
 
 
 configs_routes = Blueprint('configs', __name__)

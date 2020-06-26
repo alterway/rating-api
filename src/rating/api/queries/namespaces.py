@@ -219,15 +219,14 @@ def get_namespace_pods(namespace,
                        end,
                        tenant_id):
     qry = sa.text("""
-        SELECT  namespace,
-                pod
+        SELECT pod
         FROM frames
         WHERE namespace = :namespace
         AND frame_begin >= :start
-        AND frame_end <= :end
+        AND frame_end < :end
         AND namespace IN
         (SELECT namespace FROM namespaces WHERE tenant_id = :tenant_id)
-        GROUP BY namespace, pod
+        GROUP BY pod
         ORDER BY pod
     """)
 
@@ -248,15 +247,14 @@ def get_namespace_nodes(namespace,
                         end,
                         tenant_id):
     qry = sa.text("""
-        SELECT  namespace,
-                node
+        SELECT node
         FROM frames
         WHERE namespace = :namespace
         AND frame_begin >= :start
-        AND frame_end <= :end
+        AND frame_end < :end
         AND namespace IN
         (SELECT namespace FROM namespaces WHERE tenant_id = :tenant_id)
-        GROUP BY namespace, node
+        GROUP BY node
         ORDER BY node
     """)
 
@@ -282,7 +280,7 @@ def get_namespace_nodes_pods(namespace,
         FROM frames
         WHERE namespace = :namespace
         AND frame_begin >= :start
-        AND frame_end <= :end
+        AND frame_end < :end
         AND namespace IN
         (SELECT namespace FROM namespaces WHERE tenant_id = :tenant_id)
         GROUP BY node, pod
@@ -304,7 +302,8 @@ def get_namespace_nodes_pods(namespace,
 def get_namespace_metric_rating(namespace,
                                 metric,
                                 start,
-                                end):
+                                end,
+                                tenant_id):
     qry = sa.text("""
         SELECT frame_begin,
                frame_end,
@@ -318,6 +317,8 @@ def get_namespace_metric_rating(namespace,
         AND metric = :metric
         AND frame_begin >= :start
         AND frame_end <= :end
+        AND namespace IN
+        (SELECT namespace FROM namespaces WHERE tenant_id = :tenant_id)
         ORDER BY frame_begin, metric
     """)
 
@@ -325,7 +326,8 @@ def get_namespace_metric_rating(namespace,
         'namespace': namespace,
         'metric': metric,
         'start': start,
-        'end': end
+        'end': end,
+        'tenant_id': tenant_id
     }
 
     res = db.engine.execute(qry.params(**params))
@@ -336,7 +338,8 @@ def get_namespace_metric_rating(namespace,
 def get_namespace_metric_total_rating(namespace,
                                       metric,
                                       start,
-                                      end):
+                                      end,
+                                      tenant_id):
     qry = sa.text("""
         SELECT sum(frame_price) as frame_price,
                                    metric,
@@ -348,6 +351,8 @@ def get_namespace_metric_total_rating(namespace,
         AND metric = :metric
         AND frame_begin >= :start
         AND frame_end <= :end
+        AND namespace IN
+        (SELECT namespace FROM namespaces WHERE tenant_id = :tenant_id)
         GROUP BY metric, namespace, node, pod
         ORDER BY node, pod, metric
     """)
@@ -356,7 +361,8 @@ def get_namespace_metric_total_rating(namespace,
         'namespace': namespace,
         'metric': metric,
         'start': start,
-        'end': end
+        'end': end,
+        'tenant_id': tenant_id
     }
 
     res = db.engine.execute(qry.params(**params))

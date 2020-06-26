@@ -15,26 +15,6 @@ def ping():
     return "I'm alive!"
 
 
-# @metrics_routes.route('/tenants')
-# @with_session
-# def tenants():
-#     rows = query.get_tenants()
-#     return {
-#         'total': len(rows),
-#         'results': rows
-#     }
-
-
-# @metrics_routes.route('/tenants/<tenant>/namespace')
-# @with_session
-# def tenant_namespace(tenant):
-#     rows = query.get_tenant_namespace(tenant=tenant)
-#     return {
-#         'total': len(rows),
-#         'results': rows
-#     }
-
-
 @metrics_routes.route('/metrics')
 @with_session
 def metrics(tenant):
@@ -116,10 +96,10 @@ def report_metric(report, tenant):
     }
 
 
-@metrics_routes.route('/reports/<report_name>/last_rated')
+@metrics_routes.route('/reports/<report>/last_rated')
 @with_session
-def report_last_rated(report_name, tenant):
-    rows = query.get_last_rated_reports(report_name=report_name,
+def report_last_rated(report, tenant):
+    rows = query.get_last_rated_reports(report=report,
                                         tenant_id=tenant)
     return {
         'total': len(rows),

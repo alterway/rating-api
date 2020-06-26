@@ -31,16 +31,15 @@ def get_metric_rating(metric,
                       tenant_id):
     qry = sa.text("""
         SELECT  frame_begin,
-                frame_end,
-                metric,
-                frame_price
+                sum(frame_price) as price
         FROM frames
         WHERE metric = :metric
         AND frame_begin >= :start
         AND frame_end <= :end
         AND namespace IN
         (SELECT namespace FROM namespaces WHERE tenant_id = :tenant_id)
-        ORDER BY metric
+        GROUP BY frame_begin
+        ORDER BY frame_begin
     """)
 
     params = {
@@ -148,15 +147,15 @@ def get_report_metric(report, tenant_id):
     return [dict(row) for row in res]
 
 
-def get_last_rated_reports(report_name, tenant_id):
+def get_last_rated_reports(report, tenant_id):
     qry = sa.text("""
         SELECT last_insert
         FROM frame_status
-        WHERE report_name = :report_name
+        WHERE report_name = :report
     """)
 
     params = {
-        'report_name': report_name
+        'report': report
     }
 
     res = db.engine.execute(qry.params(**params))

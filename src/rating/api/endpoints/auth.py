@@ -20,8 +20,9 @@ class UserAlreadyExist(Exception):
 
 
 # Placeholder
-def get_frontend_ip():
-    return 'http://localhost:8080'
+def get_origin():
+    return '*'
+    # return 'http://localhost:8080'
 
 
 def with_session(func):
@@ -32,7 +33,7 @@ def with_session(func):
         response = make_response(
             jsonify(results=results, total=total),
             200)
-        response.headers['Access-Control-Allow-Origin'] = get_frontend_ip()
+        response.headers['Access-Control-Allow-Origin'] = get_origin()
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         return response
     wrapper.__name__ = func.__name__
