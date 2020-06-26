@@ -204,28 +204,30 @@ def get_pod_rating(pod,
 def get_pod_metric_rating(pod,
                           metric,
                           start,
-                          end):
+                          end,
+                          tenant_id):
     qry = sa.text("""
         SELECT  frame_begin,
                 frame_end,
-                metric,
                 frame_price,
                 namespace,
-                node,
-                pod
+                node
         FROM frames
         WHERE pod = :pod
         AND metric = :metric
         AND frame_begin >= :start
         AND frame_end <= :end
-        ORDER BY frame_begin, metric
+        AND namespace IN
+        (SELECT namespace FROM namespaces WHERE tenant_id = :tenant_id)
+        ORDER BY frame_begin
     """)
 
     params = {
         'pod': pod,
         'metric': metric,
         'start': start,
-        'end': end
+        'end': end,
+        'tenant_id': tenant_id
     }
 
     res = db.engine.execute(qry.params(**params))
@@ -236,27 +238,27 @@ def get_pod_metric_rating(pod,
 def get_pod_metric_total_rating(pod,
                                 metric,
                                 start,
-                                end):
+                                end,
+                                tenant_id):
     qry = sa.text("""
         SELECT sum(frame_price) as frame_price,
-                                   metric,
-                                   namespace,
-                                   node,
                                    pod
         FROM frames
         WHERE pod = :pod
         AND metric = :metric
         AND frame_begin >= :start
         AND frame_end <= :end
-        GROUP BY metric, namespace, node, pod
-        ORDER BY metric
+        AND namespace IN
+        (SELECT namespace FROM namespaces WHERE tenant_id = :tenant_id)
+        GROUP BY pod
     """)
 
     params = {
         'pod': pod,
         'metric': metric,
         'start': start,
-        'end': end
+        'end': end,
+        'tenant_id': tenant_id
     }
 
     res = db.engine.execute(qry.params(**params))
