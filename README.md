@@ -9,18 +9,23 @@ Running it locally for debug purposes is also possible, using `run.sh`.
 Only the endpoints targeting the external use will be described in this document.
 The `processing-operator` uses the `rating-api` to communicate with `presto` and `postgresql` internally.
 
-## Graph view
+## Grafana
 
 Most of the endpoints below can be accessed through Grafana.
-To enable it, some additionnal configuration is required:
-    - Grafana needs to be version >= 7.0
-    - `simpod-json-datasource` module should be installed in your grafana instance
-Once installed, you simply have to configure the datasource:
-    - Add a new `JSON` datasource
-    - If you have the default `rating-operator`, use `rating-api.rating.svc.cluster.local` for address
-    - Whitelist the `session` cookie
-    - Enable `With credentials`
+To enable it, the points below are required:
 
+- Grafana needs to be version >= 7.0
+- `simpod-json-datasource` module should be installed in your grafana instance
+
+Once installed, you simply have to configure the datasource:
+
+- Add a new `JSON` datasource
+- If you have a default `rating-operator` deployment, use `rating-api.rating.svc.cluster.local` for address
+- Whitelist the `session` cookie
+- Enable `With credentials`
+
+
+****
 
 ### Endpoints
 
